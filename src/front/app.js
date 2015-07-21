@@ -2,6 +2,7 @@
 
 var app;
 var config = {
+  DEBUG: true,
   IMAGE_BASE_URL: 'images',
   LOCALE_BASE_URL: '_locales',
 
@@ -43,7 +44,7 @@ var config = {
 
 
     _.forEach(this.images, (url, id) => {
-      let img = new Image();
+      var img = new Image();
       images[id] = img;
       img.onload = () => {
         this._deal();
@@ -55,8 +56,8 @@ var config = {
     }
 
     _.forEach(this.scripts, (url) => {
-      let s = document.createElement('script');
-      s.setAttribute('type', 'text/javascript;version=1.7');
+      var s = document.createElement('script');
+      s.setAttribute('type', 'text/javascript' + (config.DEBUG && bowser.firefox ? ';version=1.7' : ''));
       s.src = url;
       s.onload = () => {
         this._deal();
@@ -76,8 +77,8 @@ var config = {
 };
 
 angular.element(document).ready(function() {
-  let loc = config.locale;
-  let pref = JSON.parse(localStorage.getItem('preferences') || 'null') || config.defaultPreferences;
+  var loc = config.locale;
+  var pref = JSON.parse(localStorage.getItem('preferences') || 'null') || config.defaultPreferences;
   var curLoc = loc.enable ? pref.locale || loc.map[Object.keys(loc)[0]] : '';
   app.run(['$rootScope', '$preferences', function($rs, $pref) {
     $pref.locale = curLoc ? curLoc : $pref.locale;

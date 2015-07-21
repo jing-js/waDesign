@@ -36,6 +36,7 @@ var config = {
     root: 'src/front',
     libs: [
       'bower_components/lodash/lodash.min.js',
+      'bower_components/bowser/bowser.min.js',
       'bower_components/jquery/dist/jquery.min.js',
       'bower_components/angular/angular.min.js'
     ],
@@ -51,23 +52,15 @@ var config = {
       'theme/**/*.less',
       'view/**/*.less'
     ]
+  },
+  build: {
+    compress: 'closure', // 'closure' or 'uglify'
+    closure: '/usr/local/Cellar/closure-compiler/20150315/libexec/build/compiler.jar'
   }
 };
 var gulp = require('gulp');
-var gutil = require('gulp-util');
-var clean = require('gulp-clean');
 
 require('./gulp/build.js')(gulp, config);
 require('./gulp/server.js')(gulp, config);
 
-function log() {
-  gutil.log.apply(gutil, arguments);
-}
-
-
-gulp.task('default', ['generate', 'build', 'server'], function() {
-});
-
-gulp.task('server', ['node'], function() {
-  log('Server Listening on ' + gutil.colors.cyan('http://localhost:' + config.server.port));
-});
+gulp.task('default', ['generate', 'build', 'server']);

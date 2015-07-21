@@ -62,17 +62,19 @@
 </{{PREFIX}}-main>
 {{#DEBUG}}
 <script type="text/javascript" src="bower_components/lodash/lodash.js"></script>
+<script type="text/javascript" src="bower_components/bowser/bowser.js"></script>
 <script type="text/javascript" src="bower_components/jquery/dist/jquery.js"></script>
 <script type="text/javascript" src="bower_components/angular/angular.js"></script>
 {{/DEBUG}}
 {{^DEBUG}}
 <script type="text/javascript" src="lib/lodash.min.js"></script>
+<script type="text/javascript" src="lib/bowser.min.js"></script>
 <script type="text/javascript" src="lib/jquery.min.js"></script>
 <script type="text/javascript" src="lib/angular.min.js"></script>
 {{/DEBUG}}
 
-<script type="text/javascript;version=1.7" src="app.js"></script>
-<script type="text/javascript;version=1.7">
+<script type="text/javascript" src="app.js"></script>
+<script type="text/javascript">
   _.extend(config, {
     product: '{{PRODUCT}}',
     scripts: [
@@ -89,6 +91,7 @@
       <!-- Image End -->
     },
     locale: {{&LOCALE}},
+    DEBUG: {{DEBUG}},
     IMAGE_BASE_URL: '{{&IMAGE_ROOT}}',
     LOCALE_BASE_URL: '{{&LOCALE_ROOT}}'
   });

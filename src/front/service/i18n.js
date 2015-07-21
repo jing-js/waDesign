@@ -22,13 +22,9 @@ app
     compile: function($element, $attr) {
 
       function parse(id) {
-        let ids = id.split("#").map(function(it) {
-          return it.trim();
-        });
+        let ids = id.split("#").map(it => it.trim());
         let txt = i18n(ids[0]);
-        return ids.length > 1 ? txt.replace(/\$(\d+)/g, function(m, n) {
-          return ids[parseInt(n)] || '';
-        }) : txt;
+        return ids.length > 1 ? txt.replace(/\$(\d+)/g, (m, n) => ids[parseInt(n)] || '') : txt;
       }
 
       if ($attr.i18n) {
