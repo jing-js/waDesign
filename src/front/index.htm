@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>{{TITLE}}</title>
+
+  <style type="text/css">
+    * {
+      padding: 0;
+      margin: 0;
+      list-style: none;
+      outline: none;
+    }
+    html, body {
+      width: 100%;
+      height: 100%;
+      font-family: Microsoft Yahei, Arial, sans-serif;
+      color: #333;
+    }
+
+    {{PREFIX}}-main {
+                height: 100%;
+                width: 100%;
+                display: block;
+    }
+
+    .{{PREFIX}}-splash-loading {
+      text-align: center;
+      position: absolute;
+      left: 50%;
+      margin-left: -150px;
+      width: 300px;
+      top: 50%;
+      height: 158px;
+      margin-top: -100px;
+    }
+
+    .{{PREFIX}}-splash-loading h1 {
+      margin-bottom: 50px;
+      font-size: 60px;
+    }
+    .{{PREFIX}}-splash-loading p {
+      font-size: 20px;
+    }
+
+  </style>
+  {{#DEBUG}}
+    <!-- Style -->
+    <!-- Style End -->
+  {{/DEBUG}}
+  {{^DEBUG}}
+  <link href="{{PRODUCT}}.min.css" rel="stylesheet" />
+  {{/DEBUG}}
+</head>
+<body>
+<{{PREFIX}}-main>
+  <div class="{{PREFIX}}-splash-loading">
+    <h1>{{PRODUCT}}</h1>
+    <p>loading...</p>
+  </div>
+</{{PREFIX}}-main>
+{{#DEBUG}}
+<script type="text/javascript" src="bower_components/lodash/lodash.js"></script>
+<script type="text/javascript" src="bower_components/jquery/dist/jquery.js"></script>
+<script type="text/javascript" src="bower_components/angular/angular.js"></script>
+{{/DEBUG}}
+{{^DEBUG}}
+<script type="text/javascript" src="lib/lodash.min.js"></script>
+<script type="text/javascript" src="lib/jquery.min.js"></script>
+<script type="text/javascript" src="lib/angular.min.js"></script>
+{{/DEBUG}}
+
+<script type="text/javascript;version=1.7" src="app.js"></script>
+<script type="text/javascript;version=1.7">
+  _.extend(config, {
+    product: '{{PRODUCT}}',
+    scripts: [
+      {{#DEBUG}}
+      <!-- Script -->
+      <!-- Script End -->
+      {{/DEBUG}}
+      {{^DEBUG}}
+      '{{PRODUCT}}.min.js', '{{PRODUCT}}.template.js'
+      {{/DEBUG}}
+    ],
+    images : {
+      <!-- Image -->
+      <!-- Image End -->
+    },
+    locale: {{&LOCALE}},
+    IMAGE_BASE_URL: '{{&IMAGE_ROOT}}',
+    LOCALE_BASE_URL: '{{&LOCALE_ROOT}}'
+  });
+
+  app = angular.module('{{PRODUCT}}', [/*DEPENDENCIES*/]);
+  app.directive('{{PREFIX}}Main', ['Template', function(T) {
+    return {
+      restrict: 'E',
+      replace: true,
+      templateUrl: T.main
+    }
+  }]);
+</script>
+</body>
+</html>

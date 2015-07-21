@@ -1,0 +1,16 @@
+.idea
+.DS_Store
+node_modules
+bower_components
+test
+src/front/bower_components
+src/front/index.html
+src/front/test
+src/node/node_modules
+src/node/test
+.npm-debug
+build
+dist
+_site
+
+**/*.css

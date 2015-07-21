@@ -1,0 +1,49 @@
+@row-a-height: 30px;
+@row-b-height: 100px;
+@top-height: @row-a-height + @row-b-height;
+@main-height: ~"calc(100% - @{top-height})";
+@right-width: 300px;
+@left-width: 300px;
+@left-right-width: @left-width + @right-width;
+@center-width: ~"calc(100% - @{left-right-width})";
+
+.layout-main {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  font-size: 14px;
+  overflow: hidden;
+}
+
+.layout-top-row-a {
+  height: @row-a-height;
+  width: 100%;
+}
+
+.layout-top-row-b {
+  height: @row-b-height;
+  width: 100%;
+}
+.layout-content {
+  height: @main-height;
+  width: 100%;
+  position: relative;
+}
+.layout-content-left {
+  width: @left-width;
+  height: 100%;
+  float: left;
+}
+
+.layout-content-right {
+  width: @right-width;
+  height: 100%;
+  float: right;
+}
+
+.layout-content-center {
+  height: 100%;
+  margin-left: @left-width;
+  margin-right: @right-width;
+  width: @center-width;
+}
