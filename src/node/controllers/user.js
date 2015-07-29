@@ -1,8 +1,17 @@
+var UserModel = require('../models/user.js');
+
 module.exports = {
-  login: function*() {
+  *login() {
     var req = this.request.params;
-    if (yield this.user.login(req.email, req.password)) {
-      this.sendAjax(this.user);
+    let user = yield UserModel.findOne({
+      email: req.email,
+      password: req.password
+    }, {
+      fields: ['id', 'email', 'name']
+    });
+    if (user) {
+      yield this.user.login(user);
+      this.sendAjax(true, this.user);
     } else {
       this.sendAjax(false, 'email or password wrong.');
     }

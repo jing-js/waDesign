@@ -12,5 +12,6 @@ src/node/test
 build
 dist
 _site
+db
 
 **/*.css

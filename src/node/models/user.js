@@ -1,6 +1,6 @@
-var BaseModel = require('../lib/model.js').BaseModel;
+var BaseModel = require('../lib/app.js').BaseModel;
 
-module.exports = class User extends BaseModel{
+module.exports = class User extends BaseModel {
   constructor() {
     this.name = '';
     this.email = '';

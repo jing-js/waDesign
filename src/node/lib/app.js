@@ -1,55 +1,64 @@
-var mongo = require('mongoose');
 var _ = require('underscore');
-var redis = require('redis');
-var redisClient;
 var koa = require('koa');
+var session = require('./session.js');
+var route = require('./route.js');
 
-module.exports = function(config) {
+module.exports.logger = require('./logger.js');
+module.exports.BaseModel = require('./model.js').BaseModel;
+
+module.exports.app = function app(config) {
   var app = koa();
 
   app.context.sendAjax = sendAjax;
 
   if (config.server.access_control_allow_origin) {
-    app.use(function* setAccessControl() {
+    app.use(function* setAccessControl(next) {
       this.set('Access-Control-Allow-Origin', config.server.access_control_allow_origin);
+      yield next;
     });
   }
+
+  let dbStore;
+
+  if (config.db.type === 'mysql') {
+    dbStore = new (require('./mysql.js'))(config.db);
+
+  }
+
+  let sessionStore;
+  if (config.session.type === 'redis') {
+    sessionStore = new (require('./redis.js'))(config.session);
+  }
+  app.use(function* injectStore(next) {
+    this.db = dbStore;
+    this.sessionStore = sessionStore;
+    yield next;
+  });
+
+
+  //todo simplify below code. 简化下面代码。
+  Promise.all(new Promise(function(resolve) {
+    dbStore.onReady(resolve);
+  }), new Promise(function(resolve) {
+    sessionStore.onReady(resolve);
+  })).then(function() {
+    app.onReady();
+  });
+
+  app.use(session(app));
+  app.use(route(app));
 
   loopLoad(app, 'roles', registerRole);
   loopLoad(app, 'controllers', registerController);
 
-  /*
-   * disconnect everything on exit
-   */
-  process.on('SIGINT', function() {
-    console.log('disconnect, bye.');
-    mongo.disconnect();
-    redisClient.end();
-    process.exit(0);
-  });
 
-  /*
-   * run
-   */
-  mongo.connect(config.mongodb.connect);
-  mongo.connection.on('error', err => console.error('mongoose error:', err));
-  mongo.connection.once('open', () => {
-    redisClient = redis.createClient(config.redis.port, config.redis.host);
-    redisClient.on('error', err => console.error('redis error:', err));
-    redisClient.on('ready', () => {
-      app.redis = redisClient;
-      app.listen(config.server.port);
-    });
-  });
+  app.onReady = _.noop;
 
+  process.on('SIGINT', ()=> process.exit(0));
   return app;
 };
 
 function sendAjax(success, data) {
-  if (!_.isBoolean(success)) {
-    data = success;
-    success = true;
-  }
   this.body = JSON.stringify({
     success: success,
     data: data

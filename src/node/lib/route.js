@@ -4,36 +4,44 @@ var _ = require('lodash');
 var routeList = [];
 var isG = require('./is.js').isGeneratorFunction;
 
-module.exports = function(app) {
+module.exports = function midware(app) {
   app.get = get;
   app.post = post;
   app.put = put;
   app.del = del;
   app.head = head;
 
-  app.use(function* notFound(next) {
-    yield next;
-    if (!this.body) {
-      this.throw(404, 'not_found');
-    }
-  });
-  app.use(function* dealRoute() {
+  return function* dealRoute(next) {
     let url = this.request.originalUrl;
     for (let i = 0; i < routeList.length; i++) {
       let r = routeList[i].urlRegExp;
       let fn = routeList[i].routeFn;
       let cl = routeList[i].roleChecks;
       let med = routeList[i].method;
+      /*
+       * roleCheckReplies用于储存权限判断链路里面的权限函数的返回值。
+       * 如果权限函数返回false/undefined/null则表明权限不通过，直接抛出401异常；
+       * 否则，权限函数可以返回true/或其它可用的值。
+       *
+       * 这样做是基于以下考虑：在某次请求中，权限函数会先读取数据库看有没有相应权限，
+       *   而之后的route处理函数也会需要读取同一份数据。为了减少数据库访问，可以把
+       *   权限函数读到的数据直接传递给route函数。
+       * 目前的做法是通过参数列表传递route的参数和roleCheckReplies，因此比较隐晦，
+       *   之后可以改进为通过koa的context传递。
+       */
+      let roleCheckReplies = new Array(cl.length);
       if (this.request.method !== med) {
         continue;
       }
       let checkPass = true;
       for (let j = 0; j < cl.length; j++) {
         let checkFn = cl[i];
-        let checkResult = isG(checkFn) ? yield checkFn.call(this) : checkFn.call(this);
-        if (!checkResult) {
+        let checkResult = yield checkFn.apply(this, roleCheckReplies);
+        if (checkResult === false || checkResult === null || typeof checkResult === 'undefined') {
           checkPass = false;
           break;
+        } else {
+          roleCheckReplies[j] = checkResult;
         }
       }
       if (!checkPass) {
@@ -41,17 +49,15 @@ module.exports = function(app) {
         break;
       }
       let m = url.match(r);
-      let args = m ? m.slice(0) : null;
+      let args = m ? m.slice(0).concat(roleCheckReplies) : null;
       if (args !== null) {
-        if (isG(fn)) {
-          yield fn.apply(this, args);
-        } else {
-          fn.apply(this, args);
-        }
-        break;
+        yield fn.apply(this, args);
+        break; //目前的策略采用唯一性route，一但某个route匹配，则不再判断其它route是否匹配。
       }
     }
-  });
+
+    yield next;
+  }
 };
 
 
@@ -69,6 +75,7 @@ function route(method, url, ...args) {
     routeFn: routeFn,
     roleChecks: roleCheckList
   });
+  console.log('add route', method, url, urlRegExp);
 }
 
 function get(url, ...args) {
