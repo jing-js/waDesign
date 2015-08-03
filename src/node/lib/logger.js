@@ -1,7 +1,9 @@
+'use strict';
+
 var util = require('util');
 module.exports = logger;
 
-let instance = null;
+var instance = null;
 
 function logger(config) {
   if (!instance) {

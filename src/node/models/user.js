@@ -1,3 +1,5 @@
+'use strict';
+
 var BaseModel = require('../lib/app.js').BaseModel;
 
 module.exports = class User extends BaseModel {

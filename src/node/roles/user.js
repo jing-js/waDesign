@@ -1,6 +1,7 @@
+'use strict';
+
 export default {
-  save() {
-    //this means koa application context.
+  login() {
     return this.user.isLogin;
   }
 }

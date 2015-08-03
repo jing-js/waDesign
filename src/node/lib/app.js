@@ -1,10 +1,14 @@
-var _ = require('underscore');
+'use strict';
+
+var _ = require('lodash');
 var koa = require('koa');
 var session = require('./session.js');
 var route = require('./route.js');
 
 module.exports.logger = require('./logger.js');
 module.exports.BaseModel = require('./model.js').BaseModel;
+module.exports.BaseSessionStore = session.BaseSessionStroe;
+module.exports.BaseDatabaseStore = require('./database.js').BaseDatabaseStore;
 
 module.exports.app = function app(config) {
   var app = koa();

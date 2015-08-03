@@ -1,5 +1,6 @@
+'use strict';
 
-module.exports = BaseDatabaseStore;
+module.exports.BaseDatabaseStore = BaseDatabaseStore;
 
 class BaseDatabaseStore {
   constructor() {

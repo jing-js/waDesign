@@ -1,4 +1,6 @@
-var BaseDatabaseStore = require('./database.js');
+'use strict';
+
+var BaseDatabaseStore = require('./database.js').BaseDatabaseStore;
 var mysql = require('mysql');
 
 module.exports = MySQLDatabase;

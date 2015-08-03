@@ -1,3 +1,5 @@
+'use strict';
+
 var BaseSessionStore = require('./session.js').BaseSessionStroe;
 var redis = require('redis');
 var EXPIRE_TIME = 1800; //过期时间为30分钟

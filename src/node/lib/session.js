@@ -1,3 +1,5 @@
+'use strict';
+
 var UserModel = require('../models/user.js');
 module.exports = session;
 
